@@ -18,6 +18,7 @@ def main():
         match = prog.match(gps_output)
         if match:
             #print gps_output
+            
             gps_time = match.group(1)
             gps_latitude = match.group(2)
             gps_ns = match.group(3)
@@ -35,21 +36,36 @@ def main():
             gps_hours = gps_time[0:2]
             gps_minutes = gps_time[2:4]
             gps_seconds = gps_time[4:6]
-            gps_latitude_degrees = gps_latitude[0:2]
-            gps_latitude_minutes = gps_latitude[2:9]
-            print 'time ={} hr,{} min, {}sec'.format(gps_hours,gps_minutes,gps_seconds)
-            print 'Latitude = {} {} {}'.format(gps_latitude_degrees,gps_latitude_minutes,gps_ns)
+            #put the longitude and latitude in a format Google understands 
+            gps_latitude_degrees = float(gps_latitude[0:2])
+            gps_latitude_minutes = float(gps_latitude[2:])
+            gps_latitude_degrees = gps_latitude_degrees + (gps_latitude_minutes/60.0) 
+               
+            gps_longitude_degrees = float(gps_longitude[0:3])
+            gps_longitude_minutes = float(gps_longitude[3:])
+            gps_longitude_degrees = gps_longitude_degrees + (gps_longitude_minutes/60.0)
             
-            print gps_longitude
-            print gps_ew
-            print gps_fix 
+            print 'time utc = {}:{}:{}'.format(gps_hours,gps_minutes,gps_seconds)
+            #                                        1                     2        3                    4
+            print u'{:3.5f}{}{}  {:3.5f}{}{}'.format(gps_latitude_degrees,u"\u00B0",gps_ns,
+                                                             gps_longitude_degrees,u"\u00B0",gps_ew     )
+            if gps_fix == "0":
+                print "No gps_fix"
+            elif gps_fix == '1':
+                print 'A GPS fix'
+            elif gps_fix == '2':
+                print 'Differential GPS fix'
+            else:
+                print 'Illegal GPS fix value'
+                
             print 'Number of satellites = {}'.format(gps_number_of_satelites)
             print 'hdop = {}'.format(gps_hdop)
-            print 'altitude = {} meters'.format(gps_altitude)
+            print 'altitude = {} feet'.format(float(gps_altitude) * 3.28084)
             print 'Geoidal Separation = {}{} {}'.format(gps_gs_sign,gps_gs,gps_gs_units)
             print 'checksum = {}'.format(gps_checksum)
+            print ''
             
-            #print '{} {} {}'.format(gps_hours,gps_minutes,gps_seconds)
+            
             
             
             
